@@ -1,0 +1,16 @@
+{
+	"list.normalMappings": {
+		"<C-c>": "do:exit"
+	},
+	"list.insertMappings": {
+		"<C-c>": "do:exit"
+	},
+	"explorer.icon.enableNerdfont": true,
+	"graphql.filetypes": [
+		"graphql"
+	],
+	"eslint.autoFixOnSave": true,
+	"eslint.filetypes": ["javascript", "typescript", "typescriptreact", "vue"],
+  "vetur.experimental.templateInterpolationService": true,
+  "vetur.trace.server": "verbose"
+}
