@@ -1,0 +1,8 @@
+snippet ci
+console.info("$1: ", $1)
+endsnippet
+
+snippet writeFile
+require("fs").writeFile("/tmp/real.json", JSON.stringify($1, null, 2), () => {})
+require("fs").writeFile("/tmp/expect.json", JSON.stringify($2, null, 2), () => {})
+endsnippet

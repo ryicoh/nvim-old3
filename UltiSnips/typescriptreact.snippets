@@ -1,0 +1,13 @@
+snippet ci "console.info"
+console.info('$1: ', $1)
+endsnippet
+
+snippet css "css={css{}}"
+css={css({$1})}
+endsnippet
+
+snippet call "React.useCallback()"
+const $1 = React.useCallback(($2) => {
+  ${3:${VISUAL}}
+}, [$4]);
+endsnippet

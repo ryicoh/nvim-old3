@@ -5,12 +5,12 @@
 	"list.insertMappings": {
 		"<C-c>": "do:exit"
 	},
-	"explorer.icon.enableNerdfont": true,
 	"graphql.filetypes": [
 		"graphql"
 	],
 	"eslint.autoFixOnSave": true,
-	"eslint.filetypes": ["javascript", "typescript", "typescriptreact", "vue"],
-  "vetur.experimental.templateInterpolationService": true,
-  "vetur.trace.server": "verbose"
+  "eslint.probe": ["javascript","javascriptreact","typescript","typescriptreact","html","vue","markdown"],
+  "eslint.debug": true,
+  "vetur.trace.server": "verbose",
+  "vetur.experimental.templateInterpolationService": false
 }

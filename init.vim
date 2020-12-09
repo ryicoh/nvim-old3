@@ -1,37 +1,67 @@
 call plug#begin('~/.vim/plugged')
 	Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'tpope/vim-surround'
+	Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 	Plug 'preservim/nerdcommenter'
-	Plug 'glidenote/memolist.vim'
+	" Plug 'glidenote/memolist.vim'
 	Plug 'jparise/vim-graphql'
 	Plug 'morhetz/gruvbox'
 	Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-	Plug 'ryanoasis/vim-devicons'
 	Plug 'christianrondeau/vim-base64'
 	Plug 'airblade/vim-gitgutter'
 	Plug 'Bakudankun/BackAndForward.vim'
 	Plug 'leafgarland/typescript-vim'
-	Plug 'peitalin/vim-jsx-typescript'
+	" Plug 'peitalin/vim-jsx-typescript'
   Plug 'posva/vim-vue'
   Plug 'digitaltoad/vim-pug'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
   Plug 'vim-airline/vim-airline'
-  Plug 'ludovicchabant/vim-gutentags'
-  Plug 'kristijanhusak/vim-js-file-import', {'do': 'npm install'}
+  " Plug 'ludovicchabant/vim-gutentags'
+  " Plug 'kristijanhusak/vim-js-file-import', {'do': 'npm install'}
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rhubarb'
-  Plug 'bronson/vim-trailing-whitespace'
+  " Plug 'bronson/vim-trailing-whitespace'
+  Plug 'vim-test/vim-test'
+  " Plug 'w0rp/ale'
+  Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
+  if has('nvim')
+    Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+  else
+    Plug 'Shougo/defx.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+  endif
+	Plug 'ryanoasis/vim-devicons'
+  Plug 'kristijanhusak/defx-icons'
+  Plug 'towolf/vim-helm'
+  Plug 'sjl/gundo.vim'
+  " Plug 'ianbollinger/cabal.vim'
+  Plug 'cespare/vim-toml'
 call plug#end()
+
+let g:NERDCreateDefaultMappings = 1
 
 set termguicolors
 set wildignore+=*node_modules/**
 set wildignore+=*vendor/**
 
+lang en_US.UTF-8
 
 nmap <leader>ve :<C-u>edit ~/.config/nvim/init.vim<CR>
 nmap <leader>vs :<C-u>source ~/.config/nvim/init.vim<CR>
-nmap <leader>vu :<C-u>CocCommand snippets.editSnippets<CR>
+nmap <leader>vu :<C-u>:UltiSnipsEdit<CR>
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsEditSplit="vertical"
+
+nmap <leader>n :<C-u>call coc#float#scroll(1)<CR>
+nmap <leader>p :<C-u>call coc#float#scroll(0)<CR>
+nmap <space>\ :<C-u>call coc#float#close_all()<CR>
+
+nmap <C-2> @q
 
 nnoremap <C-h> <C-w><C-h>
 nnoremap <C-j> <C-w><C-j>
@@ -49,6 +79,7 @@ vnoremap <C-c> <ESC>
 
 cabb W w
 cabb Q q
+map Q <Nop>
 
 nnoremap <space>t  :<C-u>tabnew<CR>
 nnoremap <space>[  gT
@@ -152,16 +183,16 @@ nmap <silent> gr <Plug>(coc-references)
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocActionAsync('doHover')
-  endif
-endfunction
+"function! s:show_documentation()
+"  if (index(['vim','help'], &filetype) >= 0)
+"    execute 'h '.expand('<cword>')
+"  else
+"    call CocActionAsync('doHover')
+"  endif
+"endfunction
 
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
@@ -279,22 +310,104 @@ let g:coc_explorer_global_presets = {
 \   }
 \ }
 
-nmap <silent> <C-n> :<C-u>CocCommand explorer --toggle --preset=floatingRightside<CR>
+nnoremap <silent><C-n> :<C-u>Defx -search=`expand('%:p')`<CR>
 
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+call defx#custom#option('_', {
+      \ 'winwidth': 30,
+      \ 'split': 'vertical',
+      \ 'direction': 'topleft',
+      \ 'show_ignored_files': 1,
+      \ 'buffer_name': 'exlorer',
+      \ 'resume': 1,
+      \ })
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+autocmd FileType defx call s:defx_my_settings()
+function! s:defx_my_settings() abort
+  " Define mappings
+  nnoremap <silent><buffer><expr> <CR>
+  \ defx#do_action('drop')
+  nnoremap <silent><buffer><expr> c
+  \ defx#do_action('copy')
+  nnoremap <silent><buffer><expr> m
+  \ defx#do_action('move')
+  nnoremap <silent><buffer><expr> p
+  \ defx#do_action('paste')
+  nnoremap <silent><buffer><expr> l
+  \ defx#do_action('open_tree', 'toggle')
+  nnoremap <silent><buffer><expr> h
+  \ defx#do_action('open_tree', 'toggle')
+  nnoremap <silent><buffer><expr> s
+  \ defx#do_action('multi', [['drop', 'vsplit'], 'quit'])
+  nnoremap <silent><buffer><expr> t
+  \ defx#do_action('open','tabnew')
+  nnoremap <silent><buffer><expr> o
+  \ defx#do_action('open_tree', 'toggle')
+  nnoremap <silent><buffer><expr> K
+  \ defx#do_action('new_directory')
+  nnoremap <silent><buffer><expr> a
+  \ defx#do_action('new_file')
+  nnoremap <silent><buffer><expr> C
+  \ defx#do_action('toggle_columns',
+  \                'mark:indent:icon:filename:type:size:time')
+  nnoremap <silent><buffer><expr> S
+  \ defx#do_action('toggle_sort', 'time')
+  nnoremap <silent><buffer><expr> d
+  \ defx#do_action('remove')
+  nnoremap <silent><buffer><expr> r
+  \ defx#do_action('rename')
+  nnoremap <silent><buffer><expr> !
+  \ defx#do_action('execute_command')
+  nnoremap <silent><buffer><expr> x
+  \ defx#do_action('execute_system')
+  nnoremap <silent><buffer><expr> yy
+  \ defx#do_action('yank_path')
+  nnoremap <silent><buffer><expr> .
+  \ defx#do_action('toggle_ignored_files')
+  nnoremap <silent><buffer><expr> ;
+  \ defx#do_action('repeat')
+  nnoremap <silent><buffer><expr> <BS>
+  \ defx#do_action('cd', ['..'])
+  nnoremap <silent><buffer><expr> ~
+  \ defx#do_action('cd')
+  nnoremap <silent><buffer><expr> q
+  \ defx#do_action('quit')
+  nnoremap <silent><buffer><expr> <Space>
+  \ defx#do_action('toggle_select') . 'j'
+  nnoremap <silent><buffer><expr> *
+  \ defx#do_action('toggle_select_all')
+  nnoremap <silent><buffer><expr> j
+  \ line('.') == line('$') ? 'gg' : 'j'
+  nnoremap <silent><buffer><expr> k
+  \ line('.') == 1 ? 'G' : 'k'
+  nnoremap <silent><buffer><expr> R
+  \ defx#do_action('redraw')
+  nnoremap <silent><buffer><expr> cd
+  \ defx#do_action('change_vim_cwd')
 endfunction
 
-let g:coc_snippet_next = '<tab>'
+call defx#custom#option('_', {
+\ 'winwidth': 50,
+\ 'direction': 'topleft',
+\ 'toggle': 1,
+\ 'columns': 'indent:git:icons:filename:mark',
+\ })
+
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? coc#_select_confirm() :
+"       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+"
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~# '\s'
+" endfunction
+"
+" let g:coc_snippet_next = '<tab>'
 
 let g:go_fmt_command = "goimports"
+nmap <silent> <leader>gr :<C-u>call go#lsp#Restart()<CR>
+nmap <silent> <leader>cr :<C-u>CocRestart<CR>
 
 
 " FZF
@@ -387,3 +500,26 @@ nnoremap z<CR> 5kz<CR>5j
 nnoremap zb 5jzb5k
 nnoremap <C-f> 5k<C-f>5j
 nnoremap <C-b> 5j<C-b>5k
+
+let g:ale_linters = {
+      \ 'html': [],
+      \ 'css': ['stylelint'],
+      \ 'javascript': ['eslint', 'prettier'],
+      \ 'vue': ['eslint', 'prettier']
+      \ }
+let g:ale_fixers = {
+      \ 'html': [],
+      \ 'css': ['stylelint'],
+      \ 'javascript': ['eslint', 'prettier'],
+      \ 'vue': ['eslint', 'prettier']
+      \ }
+let g:ale_linter_aliases = {'vue': 'css'}
+let g:ale_fix_on_save = 1
+
+autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
+
+autocmd FileType typescript nmap <leader>t :<C-u>call CocAction('runCommand', 'jest.fileTest', ['%'])<CR>
+autocmd FileType typescript nmap <leader>T :<C-u>call CocAction('runCommand', 'jest.projectTest')<CR>
+
+let g:gundo_prefer_python3 = 1
+nnoremap <leader>r :<C-u>GundoToggle<CR>
