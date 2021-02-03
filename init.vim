@@ -35,10 +35,10 @@ call plug#begin('~/.vim/plugged')
   endif
 	Plug 'ryanoasis/vim-devicons'
   Plug 'kristijanhusak/defx-icons'
-  Plug 'towolf/vim-helm'
-  Plug 'sjl/gundo.vim'
+  " Plug 'towolf/vim-helm'
+  " Plug 'sjl/gundo.vim'
   " Plug 'ianbollinger/cabal.vim'
-  Plug 'cespare/vim-toml'
+  " Plug 'cespare/vim-toml'
 call plug#end()
 
 let g:NERDCreateDefaultMappings = 1
@@ -142,11 +142,11 @@ endif
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+"inoremap <silent><expr> <TAB>
+"      \ pumvisible() ? "\<C-n>" :
+"      \ <SID>check_back_space() ? "\<TAB>" :
+"      \ coc#refresh()
+"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -311,13 +311,13 @@ let g:coc_explorer_global_presets = {
 \ }
 
 nnoremap <silent><C-n> :<C-u>Defx -search=`expand('%:p')`<CR>
-
 call defx#custom#option('_', {
-      \ 'winwidth': 30,
+      \ 'winwidth': 40,
       \ 'split': 'vertical',
       \ 'direction': 'topleft',
       \ 'show_ignored_files': 1,
       \ 'buffer_name': 'exlorer',
+      \ 'toggle': 1,
       \ 'resume': 1,
       \ })
 
@@ -338,12 +338,16 @@ function! s:defx_my_settings() abort
   \ defx#do_action('open_tree', 'toggle')
   nnoremap <silent><buffer><expr> s
   \ defx#do_action('multi', [['drop', 'vsplit'], 'quit'])
+  nnoremap <silent><buffer><expr> v
+  \ defx#do_action('open', 'vsplit')
   nnoremap <silent><buffer><expr> t
   \ defx#do_action('open','tabnew')
   nnoremap <silent><buffer><expr> o
   \ defx#do_action('open_tree', 'toggle')
   nnoremap <silent><buffer><expr> K
   \ defx#do_action('new_directory')
+  nnoremap <silent><buffer><expr> N
+  \ defx#do_action('new_file')
   nnoremap <silent><buffer><expr> a
   \ defx#do_action('new_file')
   nnoremap <silent><buffer><expr> C
@@ -523,3 +527,9 @@ autocmd FileType typescript nmap <leader>T :<C-u>call CocAction('runCommand', 'j
 
 let g:gundo_prefer_python3 = 1
 nnoremap <leader>r :<C-u>GundoToggle<CR>
+      \ 'javascript': ['eslint'],
+      \ 'vue': ['eslint']
+      \ }
+let g:ale_linter_aliases = {'vue': 'css'}
+
+autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact

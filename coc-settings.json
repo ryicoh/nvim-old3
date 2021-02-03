@@ -11,6 +11,7 @@
 	"eslint.autoFixOnSave": true,
   "eslint.probe": ["javascript","javascriptreact","typescript","typescriptreact","html","vue","markdown"],
   "eslint.debug": true,
-  "vetur.trace.server": "verbose",
-  "vetur.experimental.templateInterpolationService": false
+  "eslint.filetypes": ["javascript", "typescript", "typescriptreact", "vue", "graphql"],
+  "vetur.experimental.templateInterpolationService": false,
+  "vetur.trace.server": "verbose"
 }
